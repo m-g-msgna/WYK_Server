@@ -1,0 +1,50 @@
+USE wyk_service_db;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS user_info;
+CREATE TABLE user_info (
+	user_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	signup_time BigInt NOT NULL,
+	PRIMARY KEY (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS login_info;
+CREATE TABLE login_info (
+	user_id MEDIUMINT UNSIGNED NOT NULL,
+	cl_hash VARCHAR(64) NOT NULL,
+	last_update_time BigInt NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES user_info(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS hash_change_log;
+CREATE TABLE hash_change_log (
+	log_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	user_id MEDIUMINT UNSIGNED NOT NULL,
+	change_time BigInt NOT NULL,
+	PRIMARY KEY (log_id),
+	FOREIGN KEY (user_id) REFERENCES user_info(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS auth_log;
+CREATE TABLE auth_log (
+	auth_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	user_id MEDIUMINT UNSIGNED NOT NULL,
+	auth_time BigInt NOT NULL,
+	result SMALLINT NOT NULL,
+	PRIMARY KEY (auth_id),
+	FOREIGN KEY (user_id) REFERENCES user_info(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS service_keys;
+CREATE TABLE service_keys (
+	user_id MEDIUMINT UNSIGNED NOT NULL,
+	service_pub_key VARCHAR(64),
+	FOREIGN KEY (user_id) REFERENCES user_info(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET = utf8;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+ALTER TABLE user_info AUTO_INCREMENT=1000;
+ALTER TABLE hash_change_log AUTO_INCREMENT=1;
+ALTER TABLE auth_log AUTO_INCREMENT=1;
